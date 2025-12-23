@@ -41,7 +41,7 @@ modules:
       - chmod +x /app/bin/google-chrome /app/lib/chrome/chrome
     sources:
       - type: file
-        url: https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_143.0.7499.169-1_amd64.deb
+        url: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
         dest-filename: google-chrome-stable.deb
         sha256: 8fd7838197cff488ba0775e12d817ab7aa19abccd64699744e49b81ae0833ca1 
 
