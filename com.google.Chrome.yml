@@ -1,0 +1,47 @@
+id: com.google.Chrome
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: google-chrome
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --socket=session-bus
+  - --device=dri
+  - --filesystem=home
+  - --talk-name=org.freedesktop.secrets
+  - --env=XDG_CURRENT_DESKTOP=Unity
+  - --env=GSK_RENDERER=opengl
+modules:
+  - name: zypak
+    sources:
+      - type: git
+        url: https://github.com/refi64/zypak
+        tag: v2025.09 # Standard version used by Flathub Chromium
+    buildsystem: autotools
+
+  - name: google-chrome
+    buildsystem: simple
+    build-commands:
+      - ar x google-chrome-stable.deb
+      - tar xf data.tar.xz
+      - mkdir -p /app/lib/chrome /app/bin
+      - cp -r opt/google/chrome/* /app/lib/chrome/
+      - rm /app/lib/chrome/chrome-sandbox
+      - |
+        cat << 'EOF' > /app/bin/google-chrome
+        #!/bin/sh
+        export LD_LIBRARY_PATH=/app/lib/chrome:$LD_LIBRARY_PATH
+        # Use zypak-wrapper to redirect the sandbox securely
+        exec zypak-wrapper /app/lib/chrome/chrome "$@"
+        EOF
+      - chmod +x /app/bin/google-chrome /app/lib/chrome/chrome
+    sources:
+      - type: file
+        url: https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_143.0.7499.169-1_amd64.deb
+        dest-filename: google-chrome-stable.deb
+        sha256: 8fd7838197cff488ba0775e12d817ab7aa19abccd64699744e49b81ae0833ca1 
+
